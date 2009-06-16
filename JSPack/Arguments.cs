@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2009 Richard Lopes
+ * Source taken from CodeProject
+ * http://www.codeproject.com/KB/recipes/command_line.aspx
+ */
+
+using System;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 

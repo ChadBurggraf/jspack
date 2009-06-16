@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="scripts">
+  <xs:element name="jspack">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" name="output">
@@ -25,11 +25,11 @@
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:attribute name="sourceDirectory" type="xs:string" use="required" />
-      <xs:attribute name="targetDirectory" type="xs:string" use="required" />
-      <xs:attribute name="version" type="xs:string" use="required" />
-      <xs:attribute name="minify" type="xs:boolean" use="required" />
-      <xs:attribute name="clean" type="xs:boolean" use="required" />
+      <xs:attribute name="src" type="xs:string" use="optional" />
+      <xs:attribute name="target" type="xs:string" use="optional" />
+      <xs:attribute name="version" type="xs:string" use="optional" default="" />
+      <xs:attribute name="minify" type="xs:boolean" use="optional" default="true" />
+      <xs:attribute name="clean" type="xs:boolean" use="optional" default="false" />
     </xs:complexType>
   </xs:element>
 </xs:schema>
