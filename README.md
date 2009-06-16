@@ -6,7 +6,7 @@ It's terrible and painful to do it in Windows. So here you go, a flexible, easy
 to use packaging system you can integrate into your Windows build process.
 
 Right now **JSPack** uses [YUI Compressor](http://developer.yahoo.com/yui/compressor/) 
-exclusively for minification. This as the real consequence of causing the packing 
+exclusively for minification. This has the real consequence of causing the packing 
 process to fail if you have any JavaScript syntax errors, so be warned. If there 
 is any demand, I'll make this pluggable. You will also need to have **Java** installed 
 and available in your system path.
@@ -78,7 +78,7 @@ as the map file. Leave **version** empty to prevent automatic versioning. When o
 
 After that you have a set of outputs. Each output represents a collection of scripts that
 are concatenated and possibly minified. Output sources can either come from `input` or
-`import` declarations. Inputs are paths to script files. Imports are names references
+`import` declarations. Inputs are paths to script files. Imports are named references
 to previously-defined named outputs.
 
 Output arguments:
