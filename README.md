@@ -9,7 +9,9 @@ Right now **JSPack** uses [YUI Compressor](http://developer.yahoo.com/yui/compre
 exclusively for minification. This has the real consequence of causing the packing 
 process to fail if you have any JavaScript syntax errors, so be warned. If there 
 is any demand, I'll make this pluggable. You will also need to have **Java** installed 
-and available in your system path.
+and available in your system path. Please also note that the YUI Compressor binary must
+be in the same directory as `jspack.exe`, which will happen automatically if building from
+source.
 
 ## Building
 
@@ -24,7 +26,7 @@ Scripts are packaged using an XML definition file we'll refer to as a map:
 	     Note that all paths are relatative to src and target, 
 	     which are relative to the map file. The version value can 
 	     be used for cache-busting file names. -->
-	<jspack src=".\src" target=".\build" version="1.0.0" minify="true" clean="false">
+	<jspack src=".\src" target=".\build" version="1.0.0" minify="true">
 	  <!-- Name an output to import it later. You can also prevent cache-busting 
 	       version appending by setting version="false" -->
 	  <output name="jQuery" path=".\..\lib\jquery-1.3.2.js" version="false" minify="false">
@@ -60,7 +62,7 @@ line invocation then:
 
     jspack /map:C:\path\to\map.xml /minify:false
 
-Arguments:
+**JSPack arguments:**
 
 -  **map**: Command-line only. Path to the map file defining the build.
 -  **src**: Command-line or map-defined. Identifies the root directory of the script sources.
@@ -68,20 +70,18 @@ Arguments:
 -  **version**: Command-line or map-defined. Optionally identifies a version number to add to
    output path names for automatic cache-busting.
 -  **minify**: Command-line or map-defined. A value indicating whether minification is enabled.
--  **clean**: Command-line or map-defined. A value indicating whether to delete the contents
-   of the output directory prior to building.
 
 The only required argument is **map**. Both **src** and **target** are relative to the map
 file unless fully qualified. If not specified, they will both default to the same directory
 as the map file. Leave **version** empty to prevent automatic versioning. When omitted, 
-**minify** defaults to `true` and **clean** defaults to `false`.
+**minify** defaults to `true`.
 
 After that you have a set of outputs. Each output represents a collection of scripts that
 are concatenated and possibly minified. Output sources can either come from `input` or
 `import` declarations. Inputs are paths to script files. Imports are named references
 to previously-defined named outputs.
 
-Output arguments:
+**Output arguments:**
 
 - **name**: *Optional.* The name of the output for use as an import later.
 - **path**: *Required.* The path to write the output to. Relative to `target`
@@ -92,3 +92,12 @@ Output arguments:
   if the map has minification enabled. Defaults to `true` if omitted.
 - **temporary**: *Optional.* A value indicating whether the output should be
   deleted at the end of the build process. Defaults to `false` if omitted.
+
+**Input arguments:**
+
+- **path**: *Required.* The path of the input script. Relative to `src` if
+  not fully qualified.
+
+**Import arguments:**
+
+- **name**: *Required.* The name of the named output to import.

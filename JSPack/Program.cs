@@ -17,7 +17,7 @@ namespace JSPack
 
         private const string USAGE = "Usage: ScriptBuilder /map:path_to_map [/src:path_to_source /target:path_to_target /version:version_number /minify:true|false]";
         private const string SCHEMA = "JSPack.Map.xsd";
-        private static string YUI = Path.Combine(Environment.CurrentDirectory, "yuicompressor-2.4.2.jar");
+        private static string YUI = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "yuicompressor-2.4.2.jar");
 
         #endregion
 
@@ -41,17 +41,12 @@ namespace JSPack
                     if (LoadAndValidateMap(doc, map, out error))
                     {
                         string src, target, version;
-                        bool minify, clean;
+                        bool minify;
 
-                        if (ParseArguments(new Arguments(args), map, doc, out src, out target, out version, out minify, out clean, out error))
+                        if (ParseArguments(new Arguments(args), map, doc, out src, out target, out version, out minify, out error))
                         {
                             if (Directory.Exists(src))
                             {
-                                if (clean && Directory.Exists(target))
-                                {
-                                    Directory.Delete(target, true);
-                                }
-
                                 if (!Directory.Exists(target))
                                 {
                                     Directory.CreateDirectory(target);
@@ -336,10 +331,9 @@ namespace JSPack
         /// <param name="target">Contains the target directory upon completion.</param>
         /// <param name="version">Contains the version number upon completion.</param>
         /// <param name="minify">Contains a value indicating whether minification is enabled upon completion.</param>
-        /// <param name="clean">Contains a value indicating whether cleaning is enabled upon completion.</param>
         /// <param name="reason">Contains the reason for failure if applicable.</param>
         /// <returns>True if the arguments were parsed successfully, false otherwise.</returns>
-        private static bool ParseArguments(Arguments args, string mapPath, XmlDocument map, out string src, out string target, out string version, out bool minify, out bool clean, out string reason)
+        private static bool ParseArguments(Arguments args, string mapPath, XmlDocument map, out string src, out string target, out string version, out bool minify, out string reason)
         {
             bool success = true;
             string mapDirectory = Path.GetDirectoryName(mapPath);
@@ -402,25 +396,6 @@ namespace JSPack
             catch
             {
                 reason += "Minify must be either \"true\" or \"false\". ";
-                success = false;
-            }
-
-            string cln = args["clean"] ?? String.Empty;
-
-            if (String.IsNullOrEmpty(cln))
-            {
-                cln = map.DocumentElement.Attributes["clean"].Value;
-            }
-
-            clean = false;
-
-            try
-            {
-                clean = Convert.ToBoolean(cln);
-            }
-            catch
-            {
-                reason += "Clean must be either \"true\" or \"false\". ";
                 success = false;
             }
 

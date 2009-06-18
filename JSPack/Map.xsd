@@ -29,7 +29,6 @@
       <xs:attribute name="target" type="xs:string" use="optional" />
       <xs:attribute name="version" type="xs:string" use="optional" default="" />
       <xs:attribute name="minify" type="xs:boolean" use="optional" default="true" />
-      <xs:attribute name="clean" type="xs:boolean" use="optional" default="false" />
     </xs:complexType>
   </xs:element>
 </xs:schema>

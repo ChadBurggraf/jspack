@@ -3,7 +3,7 @@
      Note that all paths are relatative to src and target, 
      which are relative to the map file. The version value can 
      be used for cache-busting file names. -->
-<jspack src=".\src" target=".\build" version="1.0.0" minify="true" clean="false">
+<jspack src=".\src" target=".\build" version="1.0.0" minify="true">
   <!-- Name an output to import it later. You can also prevent cache-busting 
        version appending by setting version="false" -->
   <output name="jQuery" path=".\..\lib\jquery-1.3.2.js" version="false" minify="false">
