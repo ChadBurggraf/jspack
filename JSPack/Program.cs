@@ -81,7 +81,7 @@ namespace JSPack
             if (success)
             {
                 Console.WriteLine();
-                Console.WriteLine(String.Format("Build completed successfully in {0:N2} seconds.", DateTime.Now.Subtract(start).TotalSeconds));
+                Console.WriteLine(String.Format("Packing completed successfully in {0:N2} seconds.", DateTime.Now.Subtract(start).TotalSeconds));
             }
             else
             {
@@ -195,7 +195,7 @@ namespace JSPack
 
             string tempPath = String.Concat(path, ".tmp", Path.GetExtension(path));
 
-            yui.StartInfo.Arguments = String.Format("-jar \"{0}\" --type js -o \"{1}\" \"{2}\"",
+            yui.StartInfo.Arguments = String.Format("-jar \"{0}\" -o \"{1}\" \"{2}\"",
                 YUI,
                 tempPath,
                 path);
