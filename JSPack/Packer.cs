@@ -112,17 +112,20 @@ namespace JSPack
                     }
                 }
 
-                if (success && !Convert.ToBoolean(output.Attributes["temporary"].Value))
+                if (success)
                 {
-                    string op = ResolveOutputPath(Arguments.TargetPath, Arguments.Version, output);
-                    string od = Path.GetDirectoryName(op);
-
-                    if (!Directory.Exists(od))
+                    if (!Convert.ToBoolean(output.Attributes["temporary"].Value))
                     {
-                        Directory.CreateDirectory(od);
-                    }
+                        string op = ResolveOutputPath(Arguments.TargetPath, Arguments.Version, output);
+                        string od = Path.GetDirectoryName(op);
 
-                    File.Copy(path, op, true);
+                        if (!Directory.Exists(od))
+                        {
+                            Directory.CreateDirectory(od);
+                        }
+
+                        File.Copy(path, op, true);
+                    }
                 }
                 else
                 {
