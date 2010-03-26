@@ -41,104 +41,114 @@ namespace JSPack
         /// <param name="standardError">The stream to write standard error messages to.</param>
         public void Pack(TextWriter standardOutput, TextWriter standardError)
         {
-            List<string> temp = new List<string>();
-            Dictionary<string, string> named = new Dictionary<string, string>();
-            XmlNodeList outputs = Loader.Map.SelectNodes("jspack/output");
+            string prevDir = Environment.CurrentDirectory;
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(this.Loader.Path));
 
-            for(int i = 0; i < outputs.Count; i++)
+            try
             {
-                XmlElement output = outputs[i] as XmlElement;
-                string info = String.Format("Concatenating output {0} of {1}", i + 1, outputs.Count);
-                string outputName = output.Attributes["name"].Value;
-                string outputPath = output.Attributes["path"].Value;
+                List<string> temp = new List<string>();
+                Dictionary<string, string> named = new Dictionary<string, string>();
+                XmlNodeList outputs = Loader.Map.SelectNodes("jspack/output");
 
-                if (!String.IsNullOrEmpty(outputName))
+                for (int i = 0; i < outputs.Count; i++)
                 {
-                    info += " (" + outputName + ").";
-                }
-                else if (!String.IsNullOrEmpty(outputPath))
-                {
-                    info += " (" + outputPath + ").";
-                }
-                else
-                {
-                    info += ".";
-                }
+                    XmlElement output = outputs[i] as XmlElement;
+                    string info = String.Format("Concatenating output {0} of {1}", i + 1, outputs.Count);
+                    string outputName = output.Attributes["name"].Value;
+                    string outputPath = output.Attributes["path"].Value;
 
-                standardOutput.WriteLine(info);
-
-                bool success = true;
-                string path = ConcatentateOutput(named, Arguments.SourcePath, output);
-                temp.Add(path);
-
-                if (Arguments.OutputActions && Convert.ToBoolean(output.Attributes["actions"].Value))
-                {
-                    foreach (OutputAction action in ResolveOutputActions(Loader, output))
+                    if (!String.IsNullOrEmpty(outputName))
                     {
-                        info = String.Concat("Executing action ", action.Name);
+                        info += " (" + outputName + ").";
+                    }
+                    else if (!String.IsNullOrEmpty(outputPath))
+                    {
+                        info += " (" + outputPath + ").";
+                    }
+                    else
+                    {
+                        info += ".";
+                    }
 
-                        if (!String.IsNullOrEmpty(outputName))
-                        {
-                            info += " on " + outputName + ".";
-                        }
-                        else if (!String.IsNullOrEmpty(outputPath))
-                        {
-                            info += " on " + outputPath + ".";
-                        }
-                        else
-                        {
-                            info += ".";
-                        }
+                    standardOutput.WriteLine(info);
 
-                        standardOutput.WriteLine(info);
-                        string tempPath = Path.GetTempFileName();
+                    bool success = true;
+                    string path = ConcatentateOutput(named, Arguments.SourcePath, output);
+                    temp.Add(path);
 
-                        using (FileStream inputStream = File.OpenRead(path))
+                    if (Arguments.OutputActions && Convert.ToBoolean(output.Attributes["actions"].Value))
+                    {
+                        foreach (OutputAction action in ResolveOutputActions(Loader, output))
                         {
-                            using (FileStream outputStream = File.OpenWrite(tempPath))
+                            info = String.Concat("Executing action ", action.Name);
+
+                            if (!String.IsNullOrEmpty(outputName))
                             {
-                                string reason;
-                                if (!action.Execute(inputStream, outputStream, out reason))
+                                info += " on " + outputName + ".";
+                            }
+                            else if (!String.IsNullOrEmpty(outputPath))
+                            {
+                                info += " on " + outputPath + ".";
+                            }
+                            else
+                            {
+                                info += ".";
+                            }
+
+                            standardOutput.WriteLine(info);
+                            string tempPath = Path.GetTempFileName();
+
+                            using (FileStream inputStream = File.OpenRead(path))
+                            {
+                                using (FileStream outputStream = File.OpenWrite(tempPath))
                                 {
-                                    standardError.WriteLine(reason);
-                                    success = false;
-                                    break;
+                                    string reason;
+                                    if (!action.Execute(inputStream, outputStream, out reason))
+                                    {
+                                        standardError.WriteLine(reason);
+                                        success = false;
+                                        break;
+                                    }
                                 }
                             }
+
+                            File.Delete(path);
+                            File.Move(tempPath, path);
                         }
-
-                        File.Delete(path);
-                        File.Move(tempPath, path);
                     }
-                }
 
-                if (success)
-                {
-                    if (!Convert.ToBoolean(output.Attributes["temporary"].Value))
+                    if (success)
                     {
-                        string op = ResolveOutputPath(Arguments.TargetPath, Arguments.Version, output);
-                        string od = Path.GetDirectoryName(op);
-
-                        if (!Directory.Exists(od))
+                        if (!Convert.ToBoolean(output.Attributes["temporary"].Value))
                         {
-                            Directory.CreateDirectory(od);
-                        }
+                            string op = ResolveOutputPath(Arguments.TargetPath, Arguments.Version, output);
+                            string od = Path.GetDirectoryName(op);
 
-                        File.Copy(path, op, true);
+                            if (!Directory.Exists(od))
+                            {
+                                Directory.CreateDirectory(od);
+                            }
+
+                            File.Copy(path, op, true);
+                        }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
-                else
+
+                foreach (string tempPath in temp)
                 {
-                    break;
+                    File.Delete(tempPath);
                 }
-            }
 
-            foreach (string tempPath in temp)
+                standardOutput.WriteLine();
+            }
+            finally
             {
-                File.Delete(tempPath);
+                Directory.SetCurrentDirectory(prevDir);
             }
-
-            standardOutput.WriteLine();
         }
 
         /// <summary>
