@@ -1,4 +1,6 @@
 *.suo
 *.csproj.user
+*.vsmdi
 bin
 obj
+TestResults/

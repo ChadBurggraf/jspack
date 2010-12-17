@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<jspack src=".\" target=".\" actions="true" version="1.2.3.4">
+  <output path="jspack.css">
+    <input path="css\yui-reset-min.css"/>
+    <input path="css\yui-fonts-min.css"/>
+  </output>
+  <output path="jspack.js">
+    <input path="script\jquery.min.js"/>
+    <input path="script\jquery-ui.min.js"/>
+  </output>
+</jspack>
